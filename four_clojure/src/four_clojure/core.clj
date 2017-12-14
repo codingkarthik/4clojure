@@ -39,3 +39,25 @@
   (fn [set1 set2]
     (clojure.set/union (clojure.set/difference set1 set2)
                        (clojure.set/difference set2 set1))))
+
+(def dot-product
+  "4clojure #143"
+  (fn [coll1 coll2]
+    (->> (map * coll1 coll2)
+         (reduce +))))
+
+(def read-binary-number
+  "4clojure #122"
+  (fn [num]
+    (let [pow (fn [b]
+                (if (zero? b)
+                  1
+                  (apply * (repeat b 2))))]
+      (map (fn [a b]
+             (* (read-string b)
+                (pow a)))
+           (range (count num))
+           (->> num
+                (#(clojure.string/split % #""))
+                (map read-string)
+                reverse)))))
