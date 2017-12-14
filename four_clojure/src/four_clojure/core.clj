@@ -114,3 +114,27 @@
                         (apply +)
                         (< x))))]
       (count (filter h-fn coll)))))
+
+(def playing-cards
+  "4clojure #128"
+  (fn [card]
+    (let [rank-map (merge {:D :diamond
+                           :S :spade
+                           :H :heart
+                           :C :club}
+                          (apply merge
+                                 (map (fn [x]
+                                        {(keyword (str x)) (- x 2)})
+                                      (range 2 10)))
+                          {:T 8
+                           :J 9
+                           :Q 10
+                           :K 11
+                           :A 12})]
+      rank-map
+      (reduce (fn [x y]
+                (if (empty? x)
+                  (assoc x :suit ((keyword (str y)) rank-map))
+                  (assoc x :rank ((keyword (str y)) rank-map))))
+              {}
+              card))))
