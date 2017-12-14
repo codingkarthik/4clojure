@@ -45,3 +45,72 @@
   (fn [coll1 coll2]
     (->> (map * coll1 coll2)
          (reduce +))))
+
+(def binary
+  "4clojure"
+  (fn [num-string]
+    (let [pow-fn (fn [pow]
+                   (apply * (repeat pow 2)))]
+      (->> (map-indexed (fn [idx a]
+                          (if (= "1" (str a))
+                            (pow-fn idx)
+                            0))
+                        (reverse num-string))
+           (reduce +)))))
+
+(def infix
+  (fn kth
+    ([& args]
+     (if-not (= 1 (count args))
+       (let [result (first args)
+             function (second args)
+             input (second (rest args))
+             next-args  (drop 3 args)
+             final-args (cons (function result input) next-args)]
+         (apply kth final-args))
+       (first args)))))
+
+(def pascal
+  (fn [x]
+    (reduce (fn [a b]
+              (conj a (/ (* (nth a b) (- (dec x) b))
+                         (inc b))))
+            [1]
+            (range (dec x)))))
+
+(fn mmap
+  ([f coll]
+   (mmap f coll []))
+  ([f coll res]
+   (if (empty? coll)
+     res
+     (lazy-seq (cons (f (first coll))
+                     (mmap f (rest coll)))))))
+
+(fn binary-tree? [coll]
+  (if (and (coll? coll))
+    (if (= 3 (count coll))
+      (boolean (and (binary? (second coll))
+                    (binary? (second (rest coll)))))
+      false)
+    (if (= false coll)
+      false
+      true)))
+
+(def sum-square
+  (fn [coll]
+    (let [n-t-d (fn ntd
+                  ([x]
+                   (ntd x []))
+                  ([x coll]
+                   (if (< x 10)
+                     (conj coll x)
+                     (ntd (int (/ x 10))
+                          (conj coll (rem x 10))))))
+          h-fn (fn [x]
+                 (let [coll (n-t-d x)]
+                   (->> coll
+                        (map #(* % %))
+                        (apply +)
+                        (< x))))]
+      (count (filter h-fn coll)))))
