@@ -34,11 +34,11 @@
                       outcomes)]
       ans)))
 
-(def symmetric-difference
+#_(def symmetric-difference
   "4clojure #88"
   (fn [set1 set2]
-    (clojure.set/union (clojure.set/difference set1 set2)
-                       (clojure.set/difference set2 set1))))
+    (union (difference set1 set2)
+           (difference set2 set1))))
 
 (def dot-product
   "4clojure #143"
@@ -90,8 +90,8 @@
 (fn binary-tree? [coll]
   (if (and (coll? coll))
     (if (= 3 (count coll))
-      (boolean (and (binary? (second coll))
-                    (binary? (second (rest coll)))))
+      (boolean (and (binary-tree? (second coll))
+                    (binary-tree? (second (rest coll)))))
       false)
     (if (= false coll)
       false
@@ -138,3 +138,26 @@
                   (assoc x :rank ((keyword (str y)) rank-map))))
               {}
               card))))
+
+(def lcmargs
+  (fn [& args]
+    (let [hcf (fn hc [x y]
+                (cond
+                  (= x y) y
+                  (> x y) (hc (- x y) y)
+                  (< x y) (hc x (- y x))))
+          lcm (fn [m n]
+                (/ (* m n) (hcf m n)))
+          denom (fn [x]
+                  (if (= (class x) (class 1))
+                    1
+                    (denominator x)))]
+      (reduce (fn [a b]
+                (let [lcm1 (lcm (denom a)
+                                (denom b))
+                      a-num (/ lcm1 (denom a))
+                      b-num (/ lcm1 (denom b))
+                      res (/ (+ a-num b-num)
+                             lcm1)]))
+              1
+              args))))
